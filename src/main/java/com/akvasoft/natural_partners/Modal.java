@@ -28,9 +28,23 @@ public class Modal {
     @Column(name = "T_PRODUCT_DESCRIPTION")
     private String desc;
 
+    @Column(name = "T_PRODUCT_IMAGES")
+    private String images;
+
 
     public int getId() {
         return id;
+    }
+
+    public String getImages() {
+        if (images == null) {
+            return " ";
+        }
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
     }
 
     public void setId(int id) {
