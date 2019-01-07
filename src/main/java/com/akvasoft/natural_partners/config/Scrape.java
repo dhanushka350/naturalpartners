@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.openqa.selenium.support.ui.Select;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,9 @@ import java.util.List;
 public class Scrape implements InitializingBean {
     private FirefoxDriver driver = null;
     private FirefoxDriver driver2 = null;
+    private FirefoxDriver driver3 = null;
+    private FirefoxDriver driver4 = null;
+    private FirefoxDriver driver5 = null;
     private boolean animal_health = true;
     private boolean prescription_roducts = true;
     private boolean acupuncture_oriental_medicine = true;
@@ -38,6 +42,9 @@ public class Scrape implements InitializingBean {
         options.setHeadless(true);
         driver = new FirefoxDriver(options);
         driver2 = new FirefoxDriver(options);
+        driver3 = new FirefoxDriver(options);
+        driver4 = new FirefoxDriver(options);
+        driver5 = new FirefoxDriver(options);
         JavascriptExecutor executor = (JavascriptExecutor) driver;
 
         List<String> list = new ArrayList<>();
@@ -207,12 +214,49 @@ public class Scrape implements InitializingBean {
 
 
         // save data
+        int i=links.size()/4;
+        Thread t1=new Thread(()->{
+            try {
+                scrapeContent(driver2,links.subList(0,i),cate);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread t2=new Thread(()->{
+            try {
+                scrapeContent(driver3,links.subList(i,i*2),cate);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread t3=new Thread(()->{
+            try {
+                scrapeContent(driver4,links.subList(i*2,i*3),cate);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread t4=new Thread(()->{
+            try {
+                scrapeContent(driver5,links.subList(i*3,links.size()),cate);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+
+    }
+
+    private void scrapeContent(FirefoxDriver driver,List<String> links,String cate) throws InterruptedException {
         for (String link : links) {
-            modal = new Modal();
-            driver2.get(link);
+            Modal modal = new Modal();
+            driver.get(link);
             Thread.sleep(10000);
-            WebElement imageDiv = driver2.findElement(By.className("content")).findElements(By.xpath("./*")).get(0).findElement(By.tagName("div")).findElements(By.xpath("./*"))
+            WebElement imageDiv = driver.findElement(By.className("content")).findElements(By.xpath("./*")).get(0).findElement(By.tagName("div")).findElements(By.xpath("./*"))
                     // get 1 to next part
                     .get(2).findElements(By.xpath("./*")).get(1).findElements(By.xpath("./*")).get(0).findElements(By.xpath("./*")).get(0).findElement(By.tagName("div"))
                     .findElement(By.className("thumbList")).findElement(By.className("productScroll")).findElement(By.id("galleryThumb")).findElement(By.className("owl-wrapper-outer"))
@@ -225,7 +269,7 @@ public class Scrape implements InitializingBean {
             modal.setImages(modal.getImages() + image + ",");
 
 
-            WebElement details = driver2.findElement(By.className("content")).findElements(By.xpath("./*")).get(0)
+            WebElement details = driver.findElement(By.className("content")).findElements(By.xpath("./*")).get(0)
                     .findElement(By.tagName("div")).findElements(By.xpath("./*")).get(2).findElements(By.xpath("./*"))
                     .get(1).findElements(By.xpath("./*")).get(1);
 //            System.out.println(details.getAttribute("class") + " classss");
@@ -261,6 +305,5 @@ public class Scrape implements InitializingBean {
             }
 
         }
-
     }
 }
