@@ -26,8 +26,8 @@ public class Scrape implements InitializingBean {
     private boolean animal_health = true;
     private boolean prescription_roducts = true;
     private boolean acupuncture_oriental_medicine = true;
-    private boolean personal_care = false;
-    private boolean herbs = false;
+    private boolean personal_care = true;
+    private boolean herbs = true;
     private boolean vitamins_and_minerals = false;
     private boolean nutritional_supplements = false;
     private boolean homeopathy = false;
